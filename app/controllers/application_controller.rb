@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   include Tr8n::CommonMethods
 
   def current_user
-    User.new
+    @current_user ||= (User.find_by_id(session[:user_id]) unless session[:user_id].blank?) || User.new
   end
   helper_method :current_user
 

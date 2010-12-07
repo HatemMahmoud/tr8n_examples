@@ -91,7 +91,7 @@ defaults: &defaults
   #############################################################################
   site_info:  
     title:                    Tr8n                            # site title - provide your site title here
-    contact_email:            admin@tr8n.org                  # contact email for questions about translations
+    contact_email:            michael@geni.com                # contact email for questions about translations
     current_locale_method:    current_locale                  # application controller method that sets and returns current locale
     default_url:              /tr8n/home                      # default site url where to redirect the user if Tr8n is disabled            
     default_locale:           en-US                           # locale of the site default language  
@@ -105,7 +105,7 @@ defaults: &defaults
     skip_before_filters:      []                              # filters from application controller
     after_filters:            []                              # filters from application controller
     user_info:
-      enabled:                false                           # if disabled, will fallback onto translators
+      enabled:                true                            # if disabled, will fallback onto translators
       class_name:             User                            # class name for the User object type
       current_user_method:    current_user                    # returns current user object
       methods:                                                # User object methods mapping

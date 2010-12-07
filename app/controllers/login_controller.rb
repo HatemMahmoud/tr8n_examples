@@ -16,9 +16,13 @@ class LoginController < ApplicationController
   def register
     if request.post?
       unless validate_registration
-        user = User.create(:user_id => 0, :email => params[:email], 
-                  :password => params[:password], :name => params[:name], :gender => params[:gender], 
-                  :mugshot => params[:mugshot], :link => params[:link])
+        user = User.create(:email => params[:email], 
+                  :password => params[:password], 
+                  :first_name => params[:first_name], 
+                  :last_name => params[:last_name], 
+                  :gender => params[:gender], 
+                  :mugshot => params[:mugshot], 
+                  :link => params[:link])
         login!(user)
         
         trfn('Thank you for registering.')
