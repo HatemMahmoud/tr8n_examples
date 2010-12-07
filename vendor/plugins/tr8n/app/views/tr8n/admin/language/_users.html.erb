@@ -1,0 +1,40 @@
+<table class="admin_table">
+  <tr>
+    <th style="width:10%">
+      Language
+    </th>
+    <th style="width:15%">
+      User
+    </th>
+    <th>
+      Translator
+    </th>
+    <th>
+      Created At
+    </th>
+    <th style="width:50px"> </th>
+  </tr>  
+  <% users.each_with_index do |language_user, index| %>
+    <tr>
+      <td><%=link_to(language_user.language.english_name, :action => :view, :lang_id => language_user.language.id)%></td>
+      <td>
+        <% if language_user.user %>
+          <%= Tr8n::Config.user_name(language_user.user) %> (<%= link_to(Tr8n::Config.user_id(language_user.user), Tr8n::Config.user_link(language_user.user)) %>)
+        <% else %>
+          Deleted user
+        <% end %>
+      </td>
+      <td>
+        <%= language_user.translator? %>
+      </td>
+      <td>
+        <%= language_user.created_at.trl(:date_time)%>
+      </td>
+      <td style="text-align:right">
+        <% if language_user.translator? %>
+          <%=link_to("View", "/tr8n/admin/translator/view?translator_id=#{language_user.translator.id}")%>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+</table>

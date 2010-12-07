@@ -1,0 +1,126 @@
+<style>
+	#language_cases table {
+		
+	}
+
+  #language_cases td {
+    padding:1px;
+		margin:0px;
+  }
+</style>
+<div id="language_cases_container" style="font-size:12px;">
+  <%=render(:partial => "header", :locals => {:section => "language_cases", :label => "Language Cases", :description => "", :mode => mode})%>
+  
+  <% form_for(:language, tr8n_current_language, :url => {:action => :index}, :html => {:id => 'language_cases_form', :method => :post}) do |f| %>
+    <div class="section_box colored">
+      <div style="float:right; padding-right:5px;">
+          <%=tr8n_help_icon_tag %>
+      </div>
+      <div ondblclick="switchSectionMode('language_cases', 'edit')">
+      	
+				<div style="padding-top:5px;padding-bottom:15px;font-size:12px;">
+					<%=tra("A language case is an inflection or use of a noun (or pronoun) to show its relation to other words in the sentence.")%>
+					<%=tra("In some languages, like Russian, the form of a token {actor} will changed based on where and how the token is used in a sentence.", "", :actor => "{actor}")%>
+          <%=tra("For instance, in '{example}', {actor} token will be in the genitive form of the language.", "", 
+                  :example => "{target} received a gift from {actor}",
+                  :actor => "{actor}")%>
+					<br><br>
+          <%=tra("This section allows you to define the various cases of your language so that translators can provide the correct form for each dynamic value of any token.")%>
+				</div>
+
+        <div id="language_cases">
+         <% if mode == :edit %>
+            <%= render :partial => "edit_cases" %> 
+				 <% elsif @cases.empty? %>
+            <div style="font-style:italic; font-size: 10px; color: grey;">
+					    <%=tra("There are no language cases defined for this language.")%>
+					  </div>
+				<% else %>
+					  <% @cases.each_with_index do |lcase, index| %>
+						    <div>
+							    <div style="padding-bottom:5px; font-size:12px;">
+					          <strong><%= lcase.native_name %></strong> 
+										<br>
+                    <span style="color:grey; font-size:10px;">(::<%= lcase.keyword %>) <%= lcase.description %> </span>
+									</div>
+									
+	                <ol style="font-size: 12px; padding-left:10px; margin:1em; list-style-type:square; margin-top:0px;">
+	                <% lcase.rules.each do |rule| %>
+	                    <li style=""><%=rule.description %></li>
+	                <% end %> 
+	                </ol>
+								</div>	
+					  <% end %>
+						
+			      <div style="padding-top:15px;">
+			          <%=link_to(tra("Click here to view the exceptional case values submitted by translators"), :controller => "/tr8n/language_cases", :action => :index) %>
+			      </div>
+												    
+					<% end %>
+        </div>	
+      </div>
+    </div>
+  <% end %>
+	
+</div>
+
+<script>
+  function updateLanguageCases(language_id) {
+    performLanguageCasesOperation(Tr8n.Utils.serializeForm('language_cases_form'));
+  }
+  
+  function addLanguageCase(position) {
+    var form_hash = Tr8n.Utils.serializeForm('language_cases_form');
+    form_hash['case_action'] = "add_at_" + position;
+    performLanguageCasesOperation(form_hash);
+  }
+
+  function editLanguageCase(position) {
+		Tr8n.Effects.hide("language_case_labels_" + position);
+		Tr8n.Effects.hide("language_case_edit_link_" + position);
+    Tr8n.Effects.show("language_case_fields_" + position);
+  }
+
+  function deleteLanguageCase(position) {
+		if (!confirm("<%=tra('Are you sure you want to delete this language case?')%>")) 
+		  return;
+			
+    var form_hash = Tr8n.Utils.serializeForm('language_cases_form');
+    form_hash['case_action'] = "delete_at_" + position;
+    performLanguageCasesOperation(form_hash);
+  }
+  
+  function clearLanguageCases() {
+    var form_hash = Tr8n.Utils.serializeForm('language_cases_form');
+    form_hash['case_action'] = "clear_all";
+    performLanguageCasesOperation(form_hash);
+  } 
+  
+  function performLanguageCasesOperation(params){
+    Tr8n.Utils.update('language_cases', '/tr8n/language/update_cases', {
+      parameters: params,
+      method: 'post'
+    });
+  }
+	
+  function addLanguageCaseRule(case_index, position) {
+    var form_hash = Tr8n.Utils.serializeForm('language_cases_form');
+    form_hash['case_index'] = case_index;
+    form_hash['case_action'] = "add_rule_at_" + position;
+    performLanguageCaseRuleOperation(case_index, form_hash);
+  }
+
+  function deleteLanguageCaseRule(case_index, position) {
+    var form_hash = Tr8n.Utils.serializeForm('language_cases_form');
+    form_hash['case_index'] = case_index;
+    form_hash['case_action'] = "delete_rule_at_" + position;
+    performLanguageCaseRuleOperation(case_index, form_hash);
+  }
+
+  function performLanguageCaseRuleOperation(case_index, params){
+    Tr8n.Utils.update('language_case_rules_' + case_index, '/tr8n/language/update_case_rules', {
+      parameters: params,
+      method: 'post'
+    });
+  }
+</script>
