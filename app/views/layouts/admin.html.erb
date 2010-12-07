@@ -2,49 +2,32 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <%=render :partial => "/layouts/html_head" %>
+    <style>
+      .page_fixed {
+        width:1200px;
+      }
+      .page_body {
+        width:1200px;
+      }
+    </style>		
   </head>
   <body>
-		<%= javascript_include_merged :admin %>
-		<%= stylesheet_link_merged :admin %>
 
     <div class="document">
 
-        <%=render :partial => "/layouts/header" %>
+      <%=render :partial => "/layouts/header" %>
 
-        <div class="tr8n_admin" style="background-color: white; padding:10px; border: 1px dotted #ccc;"> 
-					<table style="width:100%; background-color: white;">
-					  <tr>
-					    <td style="width:201px; vertical-align:top; align:left;" id="admin_sidebar">
-					      <% if current_user.admin? || RAILS_ENV=='development' %>
-					        <% [['users', 'index', 'Users'], ['language', 'index', 'Languages', '/tr8n/admin/language']].each do |link_params|
-					          kls = "admin_menu_item"
-					          if @controller.controller_name == link_params[0]
-					            kls = "admin_menu_item_selected"  # if link_params[1].empty? or @controller.action_name == link_params[1]
-					          end
-					          -%>
-					          <div class='<%=kls%>'>
-					            <%= admin_subtab_link(link_params[0], link_params[1], link_params[2], false, link_params[3]) %>
-					          </div>
-					        <% end -%>
-					        <div class="small admin_menu_item" style="height:600px;padding-top:20px;">
-					          <%= link_to_function("hide admin sidebar", "$('admin_sidebar').hide();") %>
-					        </div>
-					      <% end -%>
-					    </td>
-					
-					    <td style="vertical-align:top; padding-left:10px; padding-right:10px;">
-					      <div class="yui-t2">
-					        <div id="admin_page" style="text-align:left;">
-					          <%= @content_for_layout %>
-					        </div>
-					      </div>
-					
-					    </td>
-					  </tr>
-					</table>
+      <div class="page_fixed">
+        <div class="page_body">
+          <div class="content_module">
+            <div class="content_inner">
+              <%= @content_for_layout %>
+            </div>
+          </div>
+        </div>
+        <%=render :partial =>"/layouts/footer" %>
       </div>
-      
-			<%=render :partial =>"/layouts/footer" %>
+
     </div>
 
   </body>
