@@ -3,8 +3,19 @@
 
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
-  protect_from_forgery # See ActionController::RequestForgeryProtection for details
+  include Tr8n::CommonMethods
 
-  # Scrub sensitive parameters from your log
-  # filter_parameter_logging :password
+  def current_user
+    User.new
+  end
+  helper_method :current_user
+
+  def login!(user)
+    session[:user_id] = user.id
+  end
+
+  def logout!
+    session[:user_id] = nil
+  end  
+  
 end
