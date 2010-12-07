@@ -10,6 +10,7 @@ namespace :deploy do
 
   task :restart, :roles => :app do
      run "rm #{current_path}/config/environment.rb; cp #{current_path}/config/environment_#{application}.rb #{current_path}/config/environment.rb;"
+     run "rm #{current_path}/config/database.yml; cp #{current_path}/../../database.yml #{current_path}/config/database.yml;"
   end
 
 end
