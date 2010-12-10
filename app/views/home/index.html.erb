@@ -1,13 +1,18 @@
+  <div style="text-align:center; margin:10px; margin-bottom:20px;">
+   <%=image_tag("/tr8n/images/tr8n_logo.png", :style => "height:120px;")%>
+  </div>
+
 <h2 class="underscore content_hd">
   <%=tr('Welcome to Tr8n Translation Engine Examples Application') %>
 </h2>
+
 <div class="content_bd">
-  <h3><%=tr("If you are trying out Tr8n functionality, here are some helpful links to get you started:")%></h3>
-  <ul style="list-style-type:upper-roman; margin-left:30px; font-size:14px;">
+  <h3><%=tr("If you are trying out Tr8n functionality, here are some helpful links to get started:")%></h3>
+  <ul style="list-style-type:decimal; margin-left:30px; font-size:14px;">
     <li><%= link_to(tr("Register for a test translator account (this account is only used for testing this site)"), "/login/register")%></li>
     <li><%= tr("Change your language and enable inline translations by using the language selector in the top right corner")%></li>
 		<li><%= link_to(tr("Take a look at your dashboard and see your translation progress"), "/tr8n/dashboard")%></li>
-    <li><%= link_to(tr("View and translate phrases in the bulk mode"), "/tr8n/phrases")%></li>
+    <li><%= link_to(tr("View and translate phrases in the bulk translation mode"), "/tr8n/phrases")%></li>
     <li><%= link_to(tr("View and search through translations"), "/tr8n/translations")%></li>
     <li><%= link_to(tr("See translator awards"), "/tr8n/awards")%></li>
     <li><%= link_to(tr("Participate in translator discussions"), "/tr8n/forum")%></li>
@@ -15,11 +20,16 @@
   </ul>
 
   <br><br>
-	<h3><%=tr("If you are a RoR developer and would like to integrate Tr8n into your own application, here are some of the steps to get you started:")%></h3>
-	<ul style="list-style-type:upper-roman; margin-left:30px; font-size:14px;">
-		<li><%=tr("Download the source code from github: ")%> <%=link_to("https://github.com/berk/tr8n", "https://github.com/berk/tr8n")%></li>
-    <li><%=tr("Read the integration guide: ")%> <%=link_to("Tr8n Translation Engine Integration Guide", "/tr8n/home")%></li>
-    <li><%=tr("Read rules engine specifications: ")%> <%=link_to("Tr8n Rules Engine Configuration Guide", "/tr8n/home/rules")%></li>
+	<h3><%=tr("If you are a Ruby on Rails developer and would like to integrate Tr8n into your own application, here are some steps to get started:")%></h3>
+	<ul style="list-style-type:circle; margin-left:30px; font-size:14px;">
+		<li><%=tr("Download the source code from github:")%> <%=link_to("https://github.com/berk/tr8n", "https://github.com/berk/tr8n")%></li>
+		<li><%=tr("Read the following documents:")%>
+	    <ul style="list-style-type:circle; margin-left:30px; font-size:14px;">		
+		    <li><%=link_to("Tr8n Translation Engine Integration Guide", "http://wiki.tr8n.org/index.php?title=Tr8n_Translation_Engine_Integration_Guide")%></li>
+		    <li><%=link_to("Tr8n Label Internationalization", "http://wiki.tr8n.org/index.php?title=Tr8n_Label_Internationalization")%></li>
+		    <li><%=link_to("Tr8n Rules Engine Configuration Guide", "http://wiki.tr8n.org/index.php?title=Tr8n_Rules_Engine_Configuration_Guide")%></li>
+			</ul>
+		</li>
 	</ul>
 	
 	<div style="border-top:1px solid #ccc; margin-top:20px;">
