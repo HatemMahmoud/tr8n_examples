@@ -28,19 +28,20 @@ class Tr8n::Admin::TranslationController < Tr8n::Admin::BaseController
   end
 
   def view
-    @translation = Tr8n::Translation.find(params[:translation_id])
+    @translation = Tr8n::Translation.find_by_id(params[:translation_id])
+    return redirect_to(:action => :index) unless @translation
     @votes = Tr8n::TranslationVote.find(:all, :conditions => ["translation_id = ?", @translation.id], :order => "created_at desc", :limit => 20)
   end
 
   def delete
-    translation = Tr8n::Translation.find_by_id(params[:translation_id]) if params[:translation_id]
-    translation.destroy if translation
-    
-    if params[:source] == "translation"
-      redirect_to(:action => :index)
-    else
-      redirect_to_source  
+    params[:translations] = [params[:translation_id]] if params[:translation_id]
+    if params[:translations]
+      params[:translations].each do |translation_id|
+        translation = Tr8n::Translation.find_by_id(translation_id)
+        translation.destroy if translation
+      end  
     end
+    redirect_to_source
   end
 
   def votes
@@ -48,12 +49,16 @@ class Tr8n::Admin::TranslationController < Tr8n::Admin::BaseController
   end
 
   def delete_vote
-    vote = Tr8n::TranslationVote.find(params[:vote_id])
-    translation = vote.translation
-    vote.destroy
-    
-    translation.reload
-    translation.update_rank!
+    params[:votes] = [params[:vote_id]] if params[:vote_id]
+    if params[:votes]
+      params[:votes].each do |vote_id|
+        vote = Tr8n::TranslationVote.find_by_id(vote_id)
+        translation = vote.translation
+        vote.destroy if vote
+        translation.reload
+        translation.update_rank!
+      end  
+    end
     redirect_to_source
   end
 end

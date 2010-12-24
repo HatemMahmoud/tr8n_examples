@@ -32,16 +32,24 @@ class Tr8n::Admin::LanguageController < Tr8n::Admin::BaseController
   end
 
   def enable
-    @language = Tr8n::Language.find(params[:lang_id])
-    @language.enable!
-    trfn("#{@language.english_name} language has been enabled")
+    params[:languages] = [params[:lang_id]] if params[:lang_id]
+    if params[:languages]
+      params[:languages].each do |lang_id|
+        language = Tr8n::Language.find_by_id(lang_id)
+        language.enable! if language
+      end  
+    end
     redirect_to_source
   end
   
   def disable
-    @language = Tr8n::Language.find(params[:lang_id])
-    @language.disable!
-    trfn("#{@language.english_name} language has been disabled")
+    params[:languages] = [params[:lang_id]] if params[:lang_id]
+    if params[:languages]
+      params[:languages].each do |lang_id|
+        language = Tr8n::Language.find_by_id(lang_id)
+        language.disable! if language
+      end  
+    end
     redirect_to_source
   end
     
@@ -59,15 +67,11 @@ class Tr8n::Admin::LanguageController < Tr8n::Admin::BaseController
 
   def calculate_metrics
     Tr8n::LanguageMetric.calculate_language_metrics
-    
-    trfn("Languages metrics have been recalculated")
     redirect_to_source
   end
 
   def calculate_total_metrics
     Tr8n::LanguageMetric.calculate_total_metrics
-    
-    trfn("Languages metrics have been recalculated")
     redirect_to_source
   end
   
@@ -78,7 +82,6 @@ class Tr8n::Admin::LanguageController < Tr8n::Admin::BaseController
   def cases
     @cases = Tr8n::LanguageCase.filter(:params => params, :filter => Tr8n::LanguageCaseFilter)
   end
-
   
   def lb_update
     @language = Tr8n::Language.find_by_id(params[:lang_id]) unless params[:lang_id].blank?
@@ -91,10 +94,8 @@ class Tr8n::Admin::LanguageController < Tr8n::Admin::BaseController
     language = Tr8n::Language.find_by_id(params[:language][:id]) unless params[:language][:id].blank?
     
     if language
-      trfn("The language has been updated")
       language.update_attributes(params[:language])
     else
-      trfn("The new language has been addeded")
       language = Tr8n::Language.create(params[:language])
       language.reset!
     end

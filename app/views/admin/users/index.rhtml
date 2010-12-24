@@ -1,0 +1,5 @@
+<h2>Site Users</h2>
+
+<%= will_filter(@users) %>
+
+<%= will_filter_table_tag(@users, :columns => [:id, :email, :first_name, :last_name, :gender, :locale, :created_at]) %>
