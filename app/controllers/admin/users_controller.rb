@@ -1,4 +1,6 @@
-class Admin::UsersController < AdminController
+class Admin::UsersController < Admin::BaseController
+  
+  layout 'admin'
   
   def index
     @users = User.filter(:params => params)
