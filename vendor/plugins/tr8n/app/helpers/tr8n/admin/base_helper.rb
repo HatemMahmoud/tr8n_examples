@@ -53,4 +53,32 @@ module Tr8n::Admin::BaseHelper
    html
   end
   
+  def language_metric_chart(field = :user_count, limit = 20)
+    labels = []
+    label_positions = []
+    counts = []
+    Tr8n::TotalLanguageMetric.find(:all, :conditions => ["language_id <> ?", Tr8n::Config.default_language.id], :order => "#{field} desc", :limit => limit).each_with_index do |metric, index|
+      labels << metric.language.english_name
+      label_positions << ((index+1) * 30)
+      counts << (metric.send(field) || 0)
+    end
+
+    max_count = counts.max
+    max_count = 100 if max_count < 100
+    counts = counts.collect{|c| c/(max_count * 1.0) * 100}
+    
+    chart_params = []
+    chart_params << "chxl=1:|#{labels.join('|')}|" 
+    chart_params << "chxp=#{label_positions.join(',')}"
+    chart_params << "chxr=0,0,#{limit}|0,0,#{max_count}"
+    chart_params << "chxt=x,y"
+    chart_params << "chs=1000x300"
+    chart_params << "cht=bhs"
+    chart_params << "chbh=10"
+    chart_params << "chco=008000"
+    chart_params << "chd=t:#{counts.reverse.join(',')}"
+    
+    image_tag("http://chart.apis.google.com/chart?#{chart_params.join('&')}")     
+  end
+  
 end

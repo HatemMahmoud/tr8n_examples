@@ -64,12 +64,46 @@ class Tr8n::Admin::TranslationKeyController < Tr8n::Admin::BaseController
     redirect_to_source
   end
   
-  def key_sources
-    @key_sources = Tr8n::TranslationKeySource.filter(:params => params, :filter => Tr8n::TranslationKeySourceFilter)
+  def lb_merge
+    @keys = params[:keys] || ''
+    @keys = @keys.split(',')
+    @keys = Tr8n::TranslationKey.find(:all, :conditions => ["id in (?)", @keys])
+    @key = @keys.first
+    
+    render :layout => false
   end
-  
-  def sources
-    @sources = Tr8n::TranslationSource.filter(:params => params, :filter => Tr8n::TranslationSourceFilter)
+
+  def merge
+    master_key = Tr8n::TranslationKey.find_by_id(params[:translation_key].delete(:id))
+    
+    keys = params[:keys] || ''
+    keys = keys.split(',')
+    keys = Tr8n::TranslationKey.find(:all, :conditions => ["id in (?)", keys])
+    keys.each do |key|
+      next if key.id == master_key.id
+      key.translations.each do |translation|
+        translation.clear_cache
+        translation.update_attributes(:translation_key => master_key)
+      end
+      key.translation_key_comments.each do |comment|
+        comment.update_attributes(:translation_key => master_key)
+      end
+      key.translation_key_sources.each do |source|
+        source.update_attributes(:translation_key => master_key)
+      end
+      
+      key.reload
+      key.destroy
+    end
+    
+    params[:translation_key][:label].strip!
+    params[:translation_key][:description].strip!
+    master_key.update_attributes(params[:translation_key])
+    master_key.reset_key!
+    master_key.update_translation_count!
+    master_key.unlock_all!
+    
+    redirect_to_source
   end
   
   def comments
@@ -100,12 +134,6 @@ class Tr8n::Admin::TranslationKeyController < Tr8n::Admin::BaseController
       end  
     end
     redirect_to_source
-  end
-  
-  def lb_caller
-    @key_source = Tr8n::TranslationKeySource.find(params[:key_source_id])
-    @caller = @key_source.details[params[:caller_key]]
-    render :layout => false
   end
   
   def reset_verification_flags

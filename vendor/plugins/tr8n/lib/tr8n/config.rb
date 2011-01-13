@@ -31,28 +31,33 @@ class Tr8n::Config
   # initializes language, user and translator
   # the variables are kept in a thread safe form throughout the request
   def self.init(locale, site_current_user)
-    Thread.current[:current_language]   = Tr8n::Language.for(locale) || default_language
-    Thread.current[:current_user]       = site_current_user
-    Thread.current[:current_translator] = Tr8n::Translator.for(site_current_user)
+    Thread.current[:tr8n_current_language]   = Tr8n::Language.for(locale) || default_language
+    Thread.current[:tr8n_current_user]       = site_current_user
+    Thread.current[:tr8n_current_translator] = Tr8n::Translator.for(site_current_user)
+    Thread.current[:tr8n_block_options]      = {}
   end
   
   def self.current_user
-    Thread.current[:current_user]
+    Thread.current[:tr8n_current_user]
   end
   
   def self.current_language
-    Thread.current[:current_language] ||= default_language
+    Thread.current[:tr8n_current_language] ||= default_language
   end
   
   def self.current_user_is_translator?
-    Thread.current[:current_translator] != nil
+    Thread.current[:tr8n_current_translator] != nil
+  end
+  
+  def self.block_options
+    Thread.current[:tr8n_block_options] ||= {}
   end
   
   # when this method is called, we create the translator record right away
   # and from this point on, will track the user
   # this can happen any time user tries to translate something or enables inline translations
   def self.current_translator
-    Thread.current[:current_translator] ||= Tr8n::Translator.register
+    Thread.current[:tr8n_current_translator] ||= Tr8n::Translator.register
   end
   
   def self.default_language
@@ -62,43 +67,53 @@ class Tr8n::Config
   
   def self.reset!
     # thread based variables
-    Thread.current[:current_language]  = nil
-    Thread.current[:current_user] = nil
-    Thread.current[:current_translator] = nil
+    Thread.current[:tr8n_current_language]  = nil
+    Thread.current[:tr8n_current_user] = nil
+    Thread.current[:tr8n_current_translator] = nil
+    Thread.current[:tr8n_block_options]  = nil
   end
 
   def self.models
     [ 
        Tr8n::LanguageRule, Tr8n::LanguageUser, Tr8n::Language, Tr8n::LanguageMetric,
        Tr8n::LanguageCase, Tr8n::LanguageCaseValueMap, Tr8n::LanguageCaseRule,
-       Tr8n::TranslationKey, Tr8n::TranslationKeySource, Tr8n::TranslationSource,
-       Tr8n::TranslationKeyComment,  Tr8n::TranslationKeyLock,
+       Tr8n::TranslationKey, Tr8n::TranslationKeySource, Tr8n::TranslationKeyComment, Tr8n::TranslationKeyLock, 
+       Tr8n::TranslationSource, Tr8n::TranslationDomain,
        Tr8n::Translation, Tr8n::TranslationVote,
-       Tr8n::Translator, Tr8n::TranslatorLog, Tr8n::TranslatorMetric,
+       Tr8n::Translator, Tr8n::TranslatorLog, Tr8n::TranslatorMetric, 
+       Tr8n::TranslatorFollowing, Tr8n::TranslatorReport, 
        Tr8n::LanguageForumTopic, Tr8n::LanguageForumMessage, Tr8n::LanguageForumAbuseReport,
-       Tr8n::Glossary
+       Tr8n::Glossary, Tr8n::IpLocation
     ]    
   end
 
   # will clean all tables and initialize default values
   # never ever do it on live !!!
   def self.reset_all!
+    puts "Resetting tr8n tables..."
     models.each do |cls|
+      puts ">> Resetting #{cls.name}..."
       cls.delete_all
     end
+    puts "Done."
 
+    puts "Initializing default languages..."
     default_languages.each do |locale, info|
+      puts ">> Initializing #{info[:english_name]}..."
       lang = Tr8n::Language.find_or_create(locale, info[:english_name])
       info[:right_to_left] = false if info[:right_to_left].nil?
       fallback_key = info.delete(:fallback_key)
       lang.update_attributes(info)
       lang.reset!
     end
+    puts "Created #{default_languages.size} languages."
     
-    Tr8n::Glossary.delete_all
+    puts "Initializing default glossary..."
     default_glossary.each do |keyword, description|
       Tr8n::Glossary.create(:keyword => keyword, :description => description)
     end
+    
+    puts "Done."
   end
   
   def self.root
@@ -211,6 +226,10 @@ class Tr8n::Config
     config[:enable_language_flags]
   end
 
+  def self.enable_language_stats?
+    config[:enable_language_stats]
+  end
+
   def self.open_registration_mode?
     config[:open_registration_mode]
   end
@@ -223,6 +242,18 @@ class Tr8n::Config
     config[:enable_translator_language]
   end
 
+  def self.enable_admin_translations?
+    config[:enable_admin_translations]
+  end
+
+  def self.enable_admin_inline_mode?
+    config[:enable_admin_inline_mode]
+  end
+
+  def self.enable_country_tracking?
+    config[:enable_country_tracking]
+  end
+  
   #########################################################
   # Config Sections
   def self.caching
@@ -294,7 +325,12 @@ class Tr8n::Config
   end
   
   def self.default_locale
+    return block_options[:default_locale] if block_options[:default_locale]
     site_info[:default_locale]
+  end
+
+  def self.multiple_base_languages?
+    'en-US' == default_locale
   end
 
   def self.default_url
@@ -634,12 +670,34 @@ class Tr8n::Config
   end
 
   #########################################################
+  def self.translator_levels
+    config[:translator_levels] ||= {
+      '0'     =>  'regular',
+      '50'    =>  'trusted',
+      '100'   =>  'professional',
+      '1000'  =>  'manager'
+    } 
+  end
+
+  def self.manager_level
+    1000
+  end
+  #########################################################
   def self.enable_api?
     api[:enabled]
   end
 
   def self.enable_client_sdk?
     config[:enable_client_sdk]
+  end
+
+  #########################################################
+  def self.with_options(opts = {})
+    Thread.current[:tr8n_block_options] = opts
+    if block_given?
+      yield
+    end
+    Thread.current[:tr8n_block_options] = {}
   end
   
 end

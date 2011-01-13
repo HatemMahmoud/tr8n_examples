@@ -55,9 +55,9 @@ class Tr8n::Admin::TranslatorController < Tr8n::Admin::BaseController
     redirect_to_source
   end
 
-  def promote
+  def update_level
     @translator = Tr8n::Translator.find(params[:translator_id])
-    @translator.promote!(tr8n_current_user, params[:reason])
+    @translator.update_level!(tr8n_current_user, params[:new_level], params[:reason])
     redirect_to_source
   end
 
@@ -95,6 +95,14 @@ class Tr8n::Admin::TranslatorController < Tr8n::Admin::BaseController
     Tr8n::Translator.create(:user_id => params[:translator][:user_id])
     redirect_to_source
   end
+
+  def following
+    @following = Tr8n::TranslatorFollowing.filter(:params => params, :filter => Tr8n::TranslatorFollowingFilter)
+  end
+
+  def reports
+    @reports = Tr8n::TranslatorReport.filter(:params => params, :filter => Tr8n::TranslatorReportFilter)
+  end
    
   def log
     @logs = Tr8n::TranslatorLog.filter(:params => params, :filter => Tr8n::TranslatorLogFilter)
@@ -102,6 +110,10 @@ class Tr8n::Admin::TranslatorController < Tr8n::Admin::BaseController
 
   def metrics
     @metrics = Tr8n::TranslatorMetric.filter(:params => params, :filter => Tr8n::TranslatorMetricFilter)
+  end
+
+  def ip_locations
+    @ip_locations = Tr8n::IpLocation.filter(:params => params, :filter => Tr8n::IpLocationFilter)
   end
      
 end

@@ -24,7 +24,6 @@
 	    html.join(' ')
 	  }],
 	  [:english_name, lambda{|lang| link_to(lang.english_name, :action => :view, :lang_id => lang.id)}],
-	  [:native_name, lambda{|lang| lang.native_name}],
 	  [:right_to_left, lambda{|lang|
 	    html = []
 	    if lang.right_to_left?

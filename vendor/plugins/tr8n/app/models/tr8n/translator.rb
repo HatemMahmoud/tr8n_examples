@@ -27,6 +27,7 @@ class Tr8n::Translator < ActiveRecord::Base
   belongs_to :user, :class_name => Tr8n::Config.user_class_name, :foreign_key => :user_id
   
   has_many  :translator_logs,               :class_name => "Tr8n::TranslatorLog",             :dependent => :destroy, :order => "created_at desc"
+  has_many  :translator_following,          :class_name => "Tr8n::TranslatorFollowing",       :dependent => :destroy, :order => "created_at desc"
   has_many  :translator_metrics,            :class_name => "Tr8n::TranslatorMetric",          :dependent => :destroy
   has_many  :translations,                  :class_name => "Tr8n::Translation",               :dependent => :destroy
   has_many  :translation_votes,             :class_name => "Tr8n::TranslationVote",           :dependent => :destroy
@@ -103,14 +104,9 @@ class Tr8n::Translator < ActiveRecord::Base
     Tr8n::TranslatorLog.log_admin(self, :got_unblocked, actor, reason)
   end
   
-  def promote!(actor, reason = "No reason given")
-    update_attributes(:manager => true)
-    Tr8n::TranslatorLog.log_admin(self, :got_promoted, actor, reason)
-  end
-  
-  def demote!(actor, reason = "No reason given")
-    update_attributes(:manager => false)
-    Tr8n::TranslatorLog.log_admin(self, :got_demoted, actor, reason)
+  def update_level!(actor, new_level, reason = "No reason given")
+    update_attributes(:level => new_level)
+    Tr8n::TranslatorLog.log_admin(self, :got_new_level, actor, reason, new_level.to_s)
   end
   
   def enable_inline_translations!
@@ -193,7 +189,8 @@ class Tr8n::Translator < ActiveRecord::Base
   def manager?
     return true unless Tr8n::Config.site_user_info_enabled?
     return true if Tr8n::Config.admin_user?(user)
-    super
+    return true if level >= Tr8n::Config.manager_level
+    false
   end
 
   def last_logs
@@ -252,6 +249,43 @@ class Tr8n::Translator < ActiveRecord::Base
     return true unless user
     Tr8n::Config.guest_user?(user)
   end  
+
+  def level
+    return 0 if super.nil?
+    super
+  end
+
+  def title
+    return 'admin' if admin?
+    Tr8n::Config.translator_levels[level.to_s] || 'unknown'
+  end
+
+  def follow(object)
+    Tr8n::TranslatorFollowing.find_or_create(self, object)
+  end
+
+  def unfollow(object)
+    tf = Tr8n::TranslatorFollowing.find(:first, :conditions => ["object_type = ? and object_id = ?", object.class.name, object.id])
+    tf.destroy if tf
+  end
+
+  def self.level_options
+    @level_options ||= begin
+      opts = []
+      Tr8n::Config.translator_levels.keys.collect{|key| key.to_i}.sort.each do |key|
+        opts << [Tr8n::Config.translator_levels[key.to_s], key.to_s]
+      end
+      opts
+    end
+  end
+
+  def update_last_ip(new_ip)
+    return unless Tr8n::Config.enable_country_tracking?
+    return if self.last_ip == new_ip
+
+    country_code = Tr8n::IpLocation.find_by_ip(new_ip).ctry
+    update_attributes(:last_ip => new_ip, :country_code => country_code)
+  end
 
   def after_save
     Tr8n::Cache.delete("translator_for_#{user_id}")

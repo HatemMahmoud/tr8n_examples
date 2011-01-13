@@ -16,6 +16,9 @@
 	    html << key.description.to_s  
 	    html << '</div>'  
 	  }],
+    :locale,
+    [:admin, lambda{|key| key.admin}, 'padding:5px;text-align:right;'],
+    [:level, lambda{|key| key.level}, 'padding:5px;text-align:right;'], 
 	  [:translation_count, lambda{|key| link_to(key.translation_count || 0, "/tr8n/admin/translation/index?wf_c0=translation_key_id&wf_o0=is&wf_v0_0=#{key.id}")}, 'padding:5px;text-align:right;'],
 	  [:created_at, lambda{|key| key.created_at}, 'padding:5px;text-align:right;'],
 	  [:verified_at, lambda{|key| key.verified_at}, 'padding:5px;text-align:right;'],
@@ -29,18 +32,36 @@
 <% end %>
 
 <%= will_filter_actions_bar_tag(@keys, [
+  ['Merge Selected Keys', 'mergeSelectedKeys()'],
   ['Delete Selected Keys', 'deleteSelectedKeys()']
 ]) %>
 
 <%= render :partial => "/tr8n/admin/common/footer" %>
 
 <script>
-	function deleteSelectedKeys() {
-    if (!confirm('Are you sure you want to run this opperation?'))
+	function mergeSelectedKeys() {
+		var i=0;
+		var checkbox = Tr8n.element('wf_check_' + i);
+		var keys = [];
+		while (checkbox) {
+			if (checkbox.checked) {
+	  	  keys.push(checkbox.value);
+	    }
+			checkbox = Tr8n.element('wf_check_' + (++i));
+		}
+		if (keys.length < 2) {
+			alert('At least two keys must be selected.');
+			return;
+		}
+		tr8nLightbox.show('/tr8n/admin/translation_key/lb_merge?keys=' + keys, {height:350});
+	}
+
+  function deleteSelectedKeys() {
+    if (!confirm('Are you sure you want to delete all selected keys?'))
        return;
     Tr8n.element('keys_form').action = "/tr8n/admin/translation_key/delete";
     Tr8n.element('keys_form').submit();
-	}
+  }
 
   function resetVerificationFlags() {
     if (!confirm('Are you sure you want to run this opperation?'))

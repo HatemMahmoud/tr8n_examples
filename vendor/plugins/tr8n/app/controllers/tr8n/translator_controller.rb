@@ -27,19 +27,6 @@ class Tr8n::TranslatorController < Tr8n::BaseController
     @fallback_language = (tr8n_current_translator.fallback_language || tr8n_default_language)
   end
 
-  # if the site does not have any users, translators table can be used as the primary table
-  def login
-    # to be implemented
-  end
-
-  def logout
-    # to be implemented
-  end
-
-  def register
-    # to be implemented
-  end
-
   def update_translator_section
     @fallback_language = (tr8n_current_translator.fallback_language || tr8n_default_language)
     unless request.post?
@@ -52,4 +39,45 @@ class Tr8n::TranslatorController < Tr8n::BaseController
     @fallback_language = (tr8n_current_translator.fallback_language || tr8n_default_language)
     render(:partial => params[:section], :locals => {:mode => :view})
   end
+  
+  def follow
+    if params[:translation_key_id]
+      object = Tr8n::TranslationKey.find_by_id(params[:translation_key_id])
+      trfn("You are now following this translation key") if object
+    end
+    tr8n_current_translator.follow(object) if object
+    redirect_to_source
+  end
+
+  def unfollow
+    if params[:translation_key_id]
+      object = Tr8n::TranslationKey.find_by_id(params[:translation_key_id])
+    end
+    tr8n_current_translator.unfollow(object) if object
+    redirect_to_source
+  end
+  
+  def lb_report
+    if params[:translation_key_id]
+      @reported_object = Tr8n::TranslationKey.find_by_id(params[:translation_key_id])
+    elsif params[:translation_id]
+      @reported_object = Tr8n::Translation.find_by_id(params[:translation_id])
+    elsif params[:message_id]
+      @reported_object = Tr8n::LanguageForumMessage.find_by_id(params[:message_id])
+    elsif params[:comment_id]
+      @reported_object = Tr8n::TranslationKeyComment.find_by_id(params[:comment_id])
+    end
+    render :layout => false
+  end
+  
+  def submit_report
+    if request.post?
+      reported_object = params[:object_type].constantize.find(params[:object_id])
+      Tr8n::TranslatorReport.submit(Tr8n::Config.current_translator, reported_object, params[:reason], params[:comment])
+      trfn("Thank you for submitting your report.")
+    end
+    
+    redirect_to_source
+  end
+  
 end

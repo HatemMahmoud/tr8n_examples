@@ -55,6 +55,14 @@ module Tr8n::CommonMethods
     Tr8n::Config.default_locale
   end
   
+  def tr8n_request_remote_ip
+    @remote_ip ||= if request.env['HTTP_X_FORWARDED_FOR']
+      request.env['HTTP_X_FORWARDED_FOR'].split(',').first
+    else
+      request.remote_ip
+    end
+  end
+  
   def init_tr8n
     tr8n_current_locale = nil
     
@@ -81,7 +89,13 @@ module Tr8n::CommonMethods
       tr8n_current_user = Tr8n::Translator.new unless tr8n_current_user
     end
     
+    # initialize request thread variables
     Tr8n::Config.init(tr8n_current_locale, tr8n_current_user)
+  
+    # track user's last ip address  
+    if Tr8n::Config.enable_country_tracking? and Tr8n::Config.current_user_is_translator?
+      Tr8n::Config.current_translator.update_last_ip(tr8n_request_remote_ip)
+    end
   end
 
   # translation functions
@@ -89,20 +103,23 @@ module Tr8n::CommonMethods
     unless desc.nil? or desc.is_a?(String)
       raise Tr8n::Exception.new("The second parameter of the tr function must be a description")
     end
-    
-    if Tr8n::Config.enable_key_source_tracking?
-      begin
-        if self.respond_to?(:controller)
-          source = "#{controller.controller_name}/#{controller.action_name}"
-        else
-          source = "#{controller_name}/#{action_name}"
-        end
-      rescue Exception => ex
-        source = self.class.name
-      end
-      options.merge!(:source => source) unless options[:source]
-      options.merge!(:caller => caller)
+
+    begin
+      url     = request.url
+      host    = request.env['HTTP_HOST']
+      source  = "#{controller.class.name.underscore.gsub("_controller", "")}/#{controller.action_name}"
+    rescue Exception => ex
+      source = self.class.name
+      url = nil
+      host = 'localhost'
     end
+
+    options.merge!(:source => source) unless options[:source]
+    options.merge!(:caller => caller)
+    options.merge!(:url => url)
+    options.merge!(:host => host)
+
+#     pp [source, options[:source], url]
     
     unless Tr8n::Config.enabled?
       return Tr8n::TranslationKey.substitute_tokens(label, tokens, options)

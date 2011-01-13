@@ -12,8 +12,18 @@ namespace :tr8n do
   
   desc "Initializes all of the tables with default data"
   task :init => :environment do
-    raise "This action is prohibited in this environment" if ['production', 'stage', 'staging'].include?(Rails.env)
+    raise "This action is prohibited in this environment" if ['production', 'stage', 'staging'].include?(Rails.env) and env('force') != 'true'
     Tr8n::Config.reset_all!
+  end
+  
+  desc "Switches from manager flag to levels approach"
+  task :upgrade_managers => :environment do
+    # both of the following management approaches are deprecated, now use level only
+    Tr8n::LanguageUser.find(:all, :conditions => "manager = true").each do |lu|
+      next unless lu.translator
+      lu.translator.update_attributes(:level => Tr8n::Config.manager_level)
+    end
+    Tr8n::Translator.connection.execute("update tr8n_translators set level = #{Tr8n::Config.manager_level} where manager = true")
   end
   
   desc "Adds missing languages from the yml file"
@@ -215,6 +225,11 @@ namespace :tr8n do
   
     puts "Destroyed #{destroy_count} keys"
     puts "Destruction process took #{t1-t0} mls"
+  end
+  
+  desc 'Update IP to Location table (file=<file|config/tr8n/data/ip_locations.csv>)'
+  task :import_ip_locations => :environment do
+    Tr8n::IpLocation.import_from_file('config/tr8n/data/ip_locations.csv', :verbose => true)
   end
   
 end
