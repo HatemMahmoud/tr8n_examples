@@ -19,5 +19,17 @@
 	
 	<br><br>
 	<%= tr("You have [bold: {count||message}]", 'Inbox message', :count => 1) %>
+
+	<br><br>
+	<%= tr("{actor} gave a present to {target}", 'Newsfeed story', :actor => User.new(:first_name => 'Michael', :gender => 'male'), :target => User.new(:first_name => 'Anna', :gender => 'female')) %>
+
+	<br><br>
+	<%= tr("{actor} gave a present to {target}", 'Newsfeed story', :actor => User.new(:first_name => 'Anna', :gender => 'female'), :target => User.new(:first_name => 'Michael', :gender => 'male')) %>
+	
+	<br><br>
+	<%= tr("{actor} sent a message to {target}", 'Newsfeed story', :actor => User.new(:first_name => 'Михаил', :gender => 'male'), :target => User.new(:first_name => 'Анна', :gender => 'female')) %>
+
+	<br><br>
+	<%= tr("{actor} sent a message to {target}", 'Newsfeed story', :actor => User.new(:first_name => 'Анна', :gender => 'female'), :target => User.new(:first_name => 'Михаил', :gender => 'male')) %>
 	
 </div>

@@ -17,5 +17,11 @@ class ApplicationController < ActionController::Base
   def logout!
     session[:user_id] = nil
   end  
+
+  def redirect_to_source
+    return redirect_to(params[:source_url]) unless params[:source_url].blank?
+    return redirect_to(request.env['HTTP_REFERER']) unless request.env['HTTP_REFERER'].blank?
+    redirect_to_site_default_url
+  end
   
 end
