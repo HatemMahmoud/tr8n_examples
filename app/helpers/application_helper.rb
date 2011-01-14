@@ -3,4 +3,9 @@ module ApplicationHelper
   include Tr8n::HelperMethods
   include Wf::HelperMethods
 
+  
+  def display_user_tag(user)
+    "#{user.name} (#{user.id})"
+  end
+
 end

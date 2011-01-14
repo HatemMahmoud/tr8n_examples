@@ -24,10 +24,12 @@
 
 <% if flash[:trfn] %>
   <div class="flash_notice"><%= flash[:trfn] %></div>
+  <% flash[:trfn] = nil %>
 <% end %>
 
 <% if flash[:trfe] %>
   <div class="flash_error"><%= flash[:trfe] %></div>
+  <% flash[:trfe] = nil %>
 <% end %>
 
 <noscript>

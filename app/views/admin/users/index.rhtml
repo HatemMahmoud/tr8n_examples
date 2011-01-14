@@ -2,4 +2,9 @@
 
 <%= will_filter(@users) %>
 
-<%= will_filter_table_tag(@users, :columns => [:id, :email, :first_name, :last_name, :gender, :locale, :created_at]) %>
+<%= will_filter_table_tag(@users, :columns => [:id, :email, 
+		:first_name, :last_name, :gender, :locale,
+		[:admin, lambda{|user| user.admin?}],
+		:created_at,
+		[:actions, lambda{|user| user.admin? ? link_to('promote', '') : link_to('demote', '')}] 
+	]) %>

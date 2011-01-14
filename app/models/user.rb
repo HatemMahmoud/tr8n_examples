@@ -1,11 +1,13 @@
 class User < ActiveRecord::Base
   
+  has_one :admin
+  
   def guest?
     id.blank?
   end
   
   def admin?
-    id == 1 
+    not admin.nil? 
   end
   
   def name
@@ -15,4 +17,15 @@ class User < ActiveRecord::Base
   def gender
     super || 'unknown'
   end
+  
+  def make_admin!
+    return if admin?
+    
+    Admin.create(:user => self, :level => 0)
+  end
+  
+  def to_s
+    name
+  end
+  
 end
