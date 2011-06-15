@@ -1,0 +1,1 @@
+<%=tr("Hello World", "My first translatable greeting to the world!")%>

@@ -1,11 +1,5 @@
-ENV['RAILS_ENV'] = 'development'
+# Load the rails application
+require File.expand_path('../application', __FILE__)
 
-require "pp"
-
-require File.join(File.dirname(__FILE__), 'boot')
-
-Rails::Initializer.run do |config|
-  config.reload_plugins = true
-  config.time_zone = 'UTC'
-
-end
+# Initialize the rails application
+Tr8nExamples::Application.initialize!

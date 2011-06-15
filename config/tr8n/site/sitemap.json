@@ -1,14 +1,5 @@
 [
   {
-    "label":        "Site Sections",
-    "description":  "Sitemap section title",
-    "enabled":      true,
-    "splitters":    [[0, -1]],
-    "sections": [
-        {"label": "Home", "description": "Videos section title", "link": "/video/recent_videos?ref=tr", "sources": [], "sections": []}
-    ]
-  },
-  {
     "label":        "Tr8n Engine Sections",
     "description":  "Sitemap section title",
     "enabled":      true,

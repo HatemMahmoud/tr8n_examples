@@ -1,0 +1,25 @@
+<div class="page_ft module quiet">
+  <ul class="flt_r right_horiz_list">
+    <li><%=link_to(tr("Home"), "/home", :class => "quiet")%></li>
+    <li><%=link_to(tr("About Us"), "/", :class => "quiet")%></li>
+    <li><%=link_to(tr("Pricing"), "/", :class => "quiet")%></li>
+    <li><%=link_to(tr("Apps"), "/applications", :class => "quiet")%></li>
+    <li><%=link_to(tr("Blog"), "/", :class => "quiet")%></li>
+    <li><%=link_to(tr("Jobs"), "/", :class => "quiet")%></li>
+    <li><%=link_to(tr("Policies"), "/", :class => "quiet")%></li>
+    <li><%=link_to(tr("Help"), "/", :class => "quiet")%></li>
+  </ul>
+  &copy; Copyright 2010
+</div>
+
+</div>
+<p><%= tr8n_language_strip_tag %></p>
+
+<div id="fb-root"></div>
+<script src="<%=request.ssl? ? 'https' : 'http' %>://connect.facebook.net/en_US/all.js"></script>
+<script>
+  FB.init({appId: "<%= Facebook::Config.app_id %>", status: true, cookie: true, xfbml: true});
+  FB.Event.subscribe('auth.login', function(response) {
+     // fbAutoLoginAndRedirect('/home/index');
+  });
+</script>

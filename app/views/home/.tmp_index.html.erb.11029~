@@ -1,0 +1,9 @@
+<h2 class="underscore content_hd">
+  <%=tr('Welcome to Tr8n Translation Engine Examples Application') %>
+</h2>
+<div class="content_bd">
+  <%=tr("Hello World", "My first translatable greeting to the world!")%>
+</div>
+
+
+

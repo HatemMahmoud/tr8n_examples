@@ -1,0 +1,35 @@
+<h2 class="underscore content_hd">
+  <%=tr('Welcome to Tr8n Translation Engine Examples Application') %>
+</h2>
+<div class="content_bd">
+  <h3><%=tr("If you are trying out Tr8n functionality, here are some helpful links to get you started:")%></h3>
+  <ul style="list-style-type:upper-roman; margin-left:20px; font-size:14px;">
+    <li><%= link_to(tr("Register for a test translator account (this account is only used for testing this site)"), "/login/register")%></li>
+    <li><%= tr("Change your language and enable inline translations by using the language selector in the top right corner")%></li>
+		<li><%= link_to(tr("Take a look at your dashboard and see your translation progress"), "/tr8n/dashboard")%></li>
+    <li><%= link_to(tr("Try out the language configuration options for your language"), "/tr8n/language")%></li>
+    <li><%= link_to(tr("Take a look at the admin tools"), "/tr8n/admin/language")%></li>
+  </ul>
+
+  <br><br>
+	<h3><%=tr("If you are a RoR developer and would like to integrate Tr8n into your own application, here are some of the steps to get you started:")%></h3>
+	<ul style="list-style-type:upper-roman; margin-left:20px; font-size:14px;">
+		<li><%=tr("Download the source code from github: ")%> <%=link_to("https://github.com/berk/tr8n", "https://github.com/berk/tr8n")%></li>
+    <li><%=tr("Read the integration guide: ")%> <%=link_to("Tr8n Translation Engine Integration Guide", "/tr8n/home")%></li>
+	</ul>
+	
+	<div style="border-top:1px solid #ccc; margin-top:20px;">
+	</div>	
+	
+	<div style="padding-top:10px; color:grey">
+	  Disclaimer: 
+		This page and many other pages on this site are translatable (except for this text). We are fully aware that some users are going to try to vandalize the translations.
+	  So every registered user on this site is not only a translator, but also a language manager and an admin of the Tr8n translation system. 
+		If you see someone use bad language, you are more than welcome to block them using the admin tools. 
+	</div>
+	
+</div>
+
+
+
+
