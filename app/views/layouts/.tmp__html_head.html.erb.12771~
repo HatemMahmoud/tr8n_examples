@@ -1,4 +1,0 @@
-<title><%=trl("Tr8n Examples", "Application title")%></title>
-<%= javascript_include_merged :base %>
-<%= stylesheet_link_merged :base %>
-<%= tr8n_scripts_tag %>

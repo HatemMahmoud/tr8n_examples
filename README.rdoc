@@ -30,7 +30,7 @@ To run Tr8n in a stand-alone mode, run the following commands:
   $ cd tr8n_examples
   $ rake db:migrate
   $ rake tr8n:init
-  $ script/server
+  $ rails server
 
 The above commands will create a development sqlite3 database in the db folder of tr8n, init the database and run the local web server. Now you can open your browser and point to:
 

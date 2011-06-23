@@ -37,8 +37,18 @@
             .admin_category_item_selected a {
                 color: black;
             }
+						
         </style>
     </head>
+		
+    <%
+		    admin_links = [
+			    ["Site Users", "/admin/users", "users"],
+			    ["Site Admins", "/admin/admins", "admins"],
+			    ["Tr8n Administration", "/tr8n/admin/language", "language"],
+        ] 
+    %>
+		
     <body style="spacing:0px; padding:0px; margin:0px; background-color:#f5f5f5;">
         <div class="document">
             <%=render :partial => "/layouts/header" %>
@@ -46,39 +56,27 @@
                 <div class="page_body">
                     <div class="content_module">
                         <div class="content_inner" style="padding: 10px;">
-                            <table style="width:100%" cellpadding="0px" cellspacing="1px">
+                            <table style="width:100%" cellpadding="0px" cellspacing="5px">
                                 <tr>
-                                    <%
-                                    admin_links = [
-                                    ["Site Users", "/admin/users", "users"],
-                                    ["Site Admins", "/admin/admins", "admins"],
-                                    ["Tr8n Administration", "/tr8n/admin/language", "language"],
-                                    ] %>
-                                    <td style="background-color:#eceff5;vertical-align:top;width:180px;min-width:180px;font-size:12px; border-right:1px solid #ccc;" align="right" valign="top" class="notranslate">
-                                        <div style="font-size:16px;font-weight:bold;padding:10px">
-                                            <center>
-                                                Admin Options
-                                            </center>
+                                    <td style="background-color:#eceff5;vertical-align:top;width:180px;min-width:180px;font-size:12px; border-right:1px solid #ccc;">
+                                        <div style="font-size:16px;font-weight:bold;padding:10px; text-align:center">
+                                            Admin Options
                                         </div>
                                         <% admin_links.each do |admin| %>
-                                        <% kls = "admin_category_item"
-                                        ctrl_name = controller.controller_name
-                                        ctrl_name = 'language' if request.url.index('/tr8n/')
-                                        if admin[2] == ctrl_name
-                                        kls = "admin_category_item_selected"
-                                        end %>
-                                        <div class='<%=kls%>'>
-                                            <div style="padding:5px;">
-                                                <%=link_to(admin[0], admin[1]) %>
-                                            </div>
-                                        </div>
+	                                        <% kls = "admin_category_item"
+	                                        ctrl_name = controller.controller_name
+	                                        ctrl_name = 'language' if request.url.index('/tr8n/')
+	                                        if admin[2] == ctrl_name
+	                                          kls = "admin_category_item_selected"
+	                                        end %>
+	                                        <div class='<%=kls%>'>
+	                                            <div style="padding:5px;">
+	                                                <%=link_to(admin[0], admin[1]) %>
+	                                            </div>
+	                                        </div>
                                         <% end %>
-                                        <br>
-                                        <br>
-                                        <br>
-                                        <br>
                                     </td>
-                                    <td valign="top" style="padding:0px 5px;">
+                                    <td valign="top" style="padding-left:10px;">
                                         <%= yield %>
                                     </td>
                                 </tr>

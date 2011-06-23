@@ -50,6 +50,14 @@ Tr8nExamples::Application.routes.draw do
   # just remember to delete public/index.html.
   root :to => "home#index"
 
+  [:admins, :users].each do |ctrl|
+    match "/admin/#{ctrl}(/:action)", :controller => "admin/#{ctrl}"
+  end
+
+  namespace :admin do
+    root :to => "users#index"
+  end
+  
   # See how all your routes lay out with "rake routes"
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.
