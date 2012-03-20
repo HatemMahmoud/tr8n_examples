@@ -5,8 +5,8 @@ gem 'sqlite3'
 gem 'will_paginate', "~> 3.0.pre2"
 #gem 'will_filter', :path => '../will_filter'
 gem 'will_filter', "~> 3.0.0" 
-#gem 'tr8n', "~> 3.0.3"
-gem 'tr8n', :path => '../tr8n'
+gem 'tr8n', "~> 3.0.3"
+# gem 'tr8n', :path => '../tr8n'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
