@@ -1,40 +1,16 @@
-= Welcome to Tr8n Translation Engine Examples Application
-
-Tr8n translation engine is a rails engine plugin that provides a framework for crowd-source translations and management of any internationalized text 
-throughout any rails based application. The power of the engine comes from its simple and friendly user interface that allows site users 
-to rapidly translate the site into hundreds of languages. The flexible and robust rules engine that powers Tr8n allows for any combinations 
-of language specific rules in any translatable sentence. Users themselves can provide information on what sentences depend on gender rules, 
-number rules or other types of rules supported by the engine. The language specific rules can be registered and managed for any language in 
-the advanced user interface. The engine also provides a set of powerful admin tools that allow admins to manage any aspect of the engine; 
-enabling and disabling its features and monitoring translation process.
-
-The Tr8n engine itself is based on a very robust and flexible pluggable architecture where rule types and even syntax of the "tr" tokens 
-can be configured or extended for any application deployment.
-
-Tr8n translation engine has been successfully deployed by the following companies:
-
-Geni Inc, http://www.geni.com
-
-Yammer Inc, http://www.yammer.com 
-
-You can visit their web sites and see how it is being used. If your company is using Tr8n, please let me know and i will add you to the list.
+= Tr8n Examples on Rails 3.0.x
 
 = Installation Instructions
 
-The best way to get going with Tr8n is to run it in a stand-alone mode first, try out some translations 
-and then read the specification document, which will guide through the process of integrating Tr8n into your application.
+Run the following commands:
 
-To run Tr8n in a stand-alone mode, run the following commands:
-
-  $ git clone git://github.com/berk/tr8n_examples.git
+  $ git clone -b rails3 git@github.com:hatem/tr8n_examples.git
   $ cd tr8n_examples
+  $ bundle
   $ rake db:migrate
   $ rake tr8n:init
   $ rails server
 
-The above commands will create a development sqlite3 database in the db folder of tr8n, init the database and run the local web server. Now you can open your browser and point to:
+Now you can open your browser and point to:
 
   http://localhost:3000
-
-Congratulations! You are now running Tr8n Examples Application!
-
